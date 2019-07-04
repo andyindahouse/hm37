@@ -23,7 +23,7 @@ const T = new Twit({
 console.log(path.join(__dirname, 'public', 'index.html'));
 
 http://expressjs.com/en/starter/static-files.html   
-app.use(express.static('public'));
+app.use(express.static('Public'));
 
 const brand = 'movistar';
 
@@ -47,7 +47,6 @@ io.on('connection', function(socket) {
     var stream = T.stream('statuses/filter', { track: brand, language: 'es', filter_level: 'none' })
 
     stream.on('tweet', function (tweet) {
-        console.log(tweet);
         io.emit('tweet',{ 'tweet': tweet });
     })
 });
