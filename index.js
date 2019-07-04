@@ -13,6 +13,7 @@ const T = new Twit({
   timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests.
 });
 
+
 console.log(path.join(__dirname, 'public', 'index.html'));
 
 http://expressjs.com/en/starter/static-files.html   
@@ -47,7 +48,7 @@ io.on('connection', function(socket) {
 
 
 app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 
