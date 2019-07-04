@@ -5,6 +5,12 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const path = require('path');
 
+const { execSync } = require('child_process');
+// stderr is sent to stderr of parent process
+// you can set options.stdio if you want it to go elsewhere
+console.log('la ruta');
+console.log(execSync('ls'));
+
 const T = new Twit({
   consumer_key:         'HNDJyTtLSgTqaECGzN9Go2f9w',
   consumer_secret:      'qee32Bi9DuI1GXvRKCJEsWhd7YO5ON1z1qpPurGexJaYZydFVJ',
