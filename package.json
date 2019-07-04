@@ -12,7 +12,8 @@
     "nodemon": "^1.19.1"
   },
   "scripts": {
-    "start": "nodemon -e js,html,css index.js",
+    "start": "node index.js",
+    "start-dev": "nodemon -e js,html,css index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
