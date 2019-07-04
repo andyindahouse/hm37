@@ -1,5 +1,5 @@
 {
-  "name": "twitterstream",
+  "name": "sentiment-analyst",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,8 +8,11 @@
     "socket.io": "^2.2.0",
     "twit": "^2.2.11"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  },
   "scripts": {
+    "start": "nodemon -e js,html,css index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

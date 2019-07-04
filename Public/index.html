@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>VBI Day-VisualBI Solutions-Twitter Wall</title>
-    <meta name="description" content="Twitter Wall for VBI Day in Visual BI Solutions">
-    <link id="favicon" rel="icon" href="https://glitch.com/edit/favicon-app.ico" type="image/x-icon">
+    <title>Sentimental analyst (HMU by andy)</title>
+    <meta name="description" content="HMU by andy">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,17 +11,21 @@
   </head>
   <body>
     <div class="container">
-      <div class="img-container">
-        <img id="image" src="https://cdn.glitch.com/d768145f-48dc-43e9-bee4-e94e5d26e098%2Fthumbnails%2Flogo.jpg?1546595650739"/>
+      <div class="sentiment-container">
+          <span class="positive">😍</span>
+          <span class="neutral">😐</span>
+          <span class="negative">🤬</span>
       </div>
+      <div id="impact" style="color: white"></div>
       <div class="tweet-container">
         <div class="tweet-handle-container">
             <div class="tweet-handle-image">
-              <img id="user-image" src="https://st2.depositphotos.com/4284329/8270/v/950/depositphotos_82700158-stock-illustration-event-agency-logo.jpg" />
+              <img id="user-image" src="https://pbs.twimg.com/profile_images/835942837577465856/V_LzvMmb_400x400.jpg" />
             </div>
             <div class="tweet-handle-name">
-              <p id="user-name">Twitter Stream</p>
+              <p id="user-name">Sentiment Analyst</p>
               <p id="user-description">Using twitter stream API</p>
+              <p id="created-at">fecha tweet</p>
             </div>
           </div>
         <div class="tweet-content" id="content">
@@ -30,62 +33,95 @@
         </div>
         
       </div>
+ 
     </div>
     <footer>
-      Made with Love <3
+      Made with 💜 by andy
     </footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script>
-      var socket = io();
-      var tweetArray = [];
-      var index = 0;
+      const socket = io();
+      const apiSentimentalAnalysis = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/56a3d3ca-7de6-4ffc-a1c9-b45e938e0898?verbose=true&timezoneOffset=-360&subscription-key=d0f5210cd05740f2ad787ccd1c98a492&q=';
+      const tweetArray = [];
+      const refresh = 2000;
+      let index = 0;
+      const findTweet = id => tweetArray.find(e => e.id === id);
+
+
+      tweetCheck();
+
       socket.on('connect',function(data){
          console.log('connected');
       })
-      socket.on('tweet', function (tweet) {
-          console.log(tweet.tweet);
-          var tweetbody = {
-            'text': tweet.tweet.text,
-            'userScreenName': "@" + tweet.tweet.user.screen_name,
-            'userImage': tweet.tweet.user.profile_image_url_https,
-            'userDescription': tweet.tweet.user.description,
+
+      socket.on('tweet', ({tweet}) => {
+          if(tweet.retweeted_status || tweet.text.startsWith('RT') || findTweet(tweet.id)) {
+            console.warn('filtering RT... or repeated tweet', tweet);
+            return;
           }
-          try {
-            if(tweet.tweet.entities.media[0].media_url_https) {
-              tweetbody['image'] = tweet.tweet.entities.media[0].media_url_https;
-            }
-          } catch(err) { }
-          tweetArray.unshift(tweetbody);
-      });
-
-      
-      socket.on('allTweet', function (tweet) {
           console.log(tweet);
-          tweetArray=tweet;
-          loopArray();
+          const createAt = new Date(tweet.created_at);
+          let tweetbody = {
+            'id': tweet.id,
+            'text': tweet.truncated ? tweet.extended_tweet.full_text : tweet.text,
+            'userScreenName': "@" + tweet.user.screen_name,
+            'userImage': tweet.user.profile_image_url_https,
+            'createdAt': `${createAt.toLocaleTimeString()} - ${createAt.toLocaleDateString()}`,  
+            'userDescription': tweet.user.description,
+            'impact': `Impacto directo: ${tweet.user.followers_count} usuarios`           
+          };
+          getSentiment(tweetbody.text).then(res => {
+            console.log('sentimentAnalysis', res);
+            tweetbody.sentimentAnalysis = res.sentimentAnalysis;
+            tweetArray.push(tweetbody);    
+            console.log(tweetArray);
+          })
       });
-      
 
-      function loopArray() {
+      function tweetCheck() {
         if(tweetArray.length > index) {
-          $(".img-container").removeClass('noimage');
-          var currentTweet = tweetArray[index];
-          index ++;
-            $('#user-name').html(currentTweet.userScreenName);
-            $('#user-description').html(currentTweet.userDescription);
-            $('#content').html(currentTweet.text);
-            $("#user-image").attr("src",currentTweet.userImage);
-            if(currentTweet.image) {            
-              $("#image").attr("src",currentTweet.image);            
-            }else{
-               $(".img-container").addClass('noimage');
-            }
-        } else {
-          index = 0;
+          const currentTweet = tweetArray[index];
+          index++;
+          tweetPrint(currentTweet);
         }
-        setTimeout(loopArray, 10000);
+        setTimeout(tweetCheck, refresh);
       }
+
+      const tweetPrint = (tweet) => {
+        $('#user-name').html(tweet.userScreenName);
+        $('#user-description').html(tweet.userDescription);
+        $('#content').html(tweet.text);
+        $("#user-image").attr("src",tweet.userImage);
+        $('#created-at').html(tweet.createdAt);
+        $('#impact').html(tweet.createAt);
+        if(tweet.sentimentAnalysis) {
+          sentimentPrint(tweet.sentimentAnalysis.score);
+        }
+      }
+
+      const getSentiment = (phrase) => {
+        return fetch(`${apiSentimentalAnalysis}${phrase}`)
+          .then(res => res.json());
+      }
+
+      const sentimentPrint = score => {
+        console.log(score);
+        if(score > 0.6) {
+          $('.positive').show();
+          $('.negative').hide();
+          $('.neutral').hide();
+        } else if(score < 0.4) {
+          $('.negative').show();
+          $('.positive').hide();
+          $('.neutral').hide();
+        } else {
+          $('.neutral').show();
+          $('.negative').hide();
+          $('.positive').hide();
+        }
+      }
+
     </script>
   </body>
 </html>

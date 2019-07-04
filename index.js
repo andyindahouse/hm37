@@ -1,24 +1,28 @@
-var Twit = require('twit');
+const Twit = require('twit');
 const express = require('express');
 const app = express();
 const server = require('http').Server(app);
-var io = require('socket.io')(server);
-var fs = require('fs');
+const io = require('socket.io')(server);
+
+const T = new Twit({
+  consumer_key:         'HNDJyTtLSgTqaECGzN9Go2f9w',
+  consumer_secret:      'qee32Bi9DuI1GXvRKCJEsWhd7YO5ON1z1qpPurGexJaYZydFVJ',
+  access_token:         '123662346-1G2QmhixSBqOg0XPnqtVo3XP9ytwULeT8PimhL4m',
+  access_token_secret:  'BfNHY4saSz7SMHip2APrFGlvtBLG0qab2L1RqX8RewcKR',
+  timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests.
+});
 
 
-
-// http://expressjs.com/en/starter/static-files.html
+// http://expressjs.com/en/starter/static-files.html   
 app.use(express.static('public'));
 
-
-
-
+const brand = 'movistar';
 
 io.on('connection', function(socket) {
-
-    T.get('search/tweets', { q: '#coding', count: 100 }, function(err, data, response) {
-      var tweetArray=[];
-        for (let index = 0; index < data.statuses.length; index++) {
+  
+  T.get('search/tweets', { q: brand, count: 100 }, function(err, data, response) {
+    var tweetArray=[];
+    for (let index = 0; index < data.statuses.length; index++) {
             const tweet = data.statuses[index];
             var tweetbody = {
               'text': tweet.text,
@@ -26,32 +30,21 @@ io.on('connection', function(socket) {
               'userImage': tweet.user.profile_image_url_https,
               'userDescription': tweet.user.description,
             }
-            try {
-              if(tweet.entities.media[0].media_url_https) {
-                tweetbody['image'] = tweet.entities.media[0].media_url_https;
-              }
-            } catch(err) { }
             tweetArray.push(tweetbody);
         }     
         io.emit('allTweet',tweetArray)
     })
 
-    var stream = T.stream('statuses/filter', { track: '#coding', language: 'en' })
+    var stream = T.stream('statuses/filter', { track: brand, language: 'es', filter_level: 'none' })
 
     stream.on('tweet', function (tweet) {
+        console.log(tweet);
         io.emit('tweet',{ 'tweet': tweet });
     })
 });
 
-var T = new Twit({
-  consumer_key:         '',
-  consumer_secret:      '',
-  access_token:         '',
-  access_token_secret:  '',
-  timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests.
-});
 
 // listen for requests :)
-const listener = server.listen(process.env.PORT, function() {
+const listener = server.listen(3000, function() {
   console.log('Your app is listening on port ' + listener.address().port);
 });
