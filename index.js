@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
+const path = require('path');
 
 const T = new Twit({
   consumer_key:         'HNDJyTtLSgTqaECGzN9Go2f9w',
@@ -42,6 +43,13 @@ io.on('connection', function(socket) {
         io.emit('tweet',{ 'tweet': tweet });
     })
 });
+
+
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+
 
 
 // listen for requests :)
