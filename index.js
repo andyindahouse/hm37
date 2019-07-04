@@ -9,7 +9,7 @@ const { execSync } = require('child_process');
 // stderr is sent to stderr of parent process
 // you can set options.stdio if you want it to go elsewhere
 console.log('la ruta');
-console.log(execSync('ls'));
+console.log(execSync('ls').toString('utf8'));
 
 const T = new Twit({
   consumer_key:         'HNDJyTtLSgTqaECGzN9Go2f9w',
