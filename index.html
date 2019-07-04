@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Sentimental analyst (HMU by andy)</title>
+    <meta name="description" content="HMU by andy">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="sentiment-container">
+          <span class="positive">😍</span>
+          <span class="neutral">😐</span>
+          <span class="negative">🤬</span>
+      </div>
+      <div id="impact" style="color: white"></div>
+      <div class="tweet-container">
+        <div class="tweet-handle-container">
+            <div class="tweet-handle-image">
+              <img id="user-image" src="https://pbs.twimg.com/profile_images/835942837577465856/V_LzvMmb_400x400.jpg" />
+            </div>
+            <div class="tweet-handle-name">
+              <p id="user-name">Sentiment Analyst</p>
+              <p id="user-description">Using twitter stream API</p>
+              <p id="created-at">fecha tweet</p>
+            </div>
+          </div>
+        <div class="tweet-content" id="content">
+            Let the tweets slide one by one 
+        </div>
+        
+      </div>
+ 
+    </div>
+    <footer>
+      Made with 💜 by andy
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    
+  </body>
+</html>
