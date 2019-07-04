@@ -23,7 +23,7 @@ const T = new Twit({
 console.log(path.join(__dirname, 'public', 'index.html'));
 
 http://expressjs.com/en/starter/static-files.html   
-app.use(express.static('public'));
+app.use(express.static('public/'));
 
 const brand = 'movistar';
 
