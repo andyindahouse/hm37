@@ -5,11 +5,11 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const path = require('path');
 
-const { execSync } = require('child_process');
-// stderr is sent to stderr of parent process
-// you can set options.stdio if you want it to go elsewhere
-console.log('la ruta');
-console.log(execSync('ls').toString('utf8'));
+// const { execSync } = require('child_process');
+// // stderr is sent to stderr of parent process
+// // you can set options.stdio if you want it to go elsewhere
+// console.log('la ruta');
+// console.log(execSync('ls').toString('utf8'));
 
 const T = new Twit({
   consumer_key:         'HNDJyTtLSgTqaECGzN9Go2f9w',
@@ -19,13 +19,10 @@ const T = new Twit({
   timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests.
 });
 
-
-console.log(path.join(__dirname, 'public', 'index.html'));
-
 http://expressjs.com/en/starter/static-files.html   
 app.use(express.static('Public'));
 
-const brand = 'movistar';
+const brand = 'movistar'; 
 
 io.on('connection', function(socket) {
   
@@ -47,17 +44,14 @@ io.on('connection', function(socket) {
     var stream = T.stream('statuses/filter', { track: brand, language: 'es', filter_level: 'none' })
 
     stream.on('tweet', function (tweet) {
+        console.log(tweet);
         io.emit('tweet',{ 'tweet': tweet });
     })
 });
 
-
 app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname, 'Public', 'index.html'));
 });
-
-
-
 
 // listen for requests :)
 const listener = server.listen(process.env.PORT || 3000, function() {

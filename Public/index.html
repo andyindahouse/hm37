@@ -25,7 +25,7 @@
             <div class="tweet-handle-name">
               <p id="user-name">Sentiment Analyst</p>
               <p id="user-description">Using twitter stream API</p>
-              <p id="created-at">fecha tweet</p>
+              <p id="created-at">created at</p>
             </div>
           </div>
         <div class="tweet-content" id="content">
@@ -94,7 +94,7 @@
         $('#content').html(tweet.text);
         $("#user-image").attr("src",tweet.userImage);
         $('#created-at').html(tweet.createdAt);
-        $('#impact').html(tweet.createAt);
+        $('#impact').html(tweet.impact);
         if(tweet.sentimentAnalysis) {
           sentimentPrint(tweet.sentimentAnalysis.score);
         }
