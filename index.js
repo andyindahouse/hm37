@@ -22,7 +22,7 @@ const T = new Twit({
 http://expressjs.com/en/starter/static-files.html   
 app.use(express.static('Public'));
 
-const brand = 'movistar'; 
+const brand = 'movistar,@movistar_es,@MovistarArg,tuenti'; 
 
 io.on('connection', function(socket) {
   
